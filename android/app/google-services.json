@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "971166580126",
+    "project_id": "groupfinance-ba785",
+    "storage_bucket": "groupfinance-ba785.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:971166580126:android:2fd786d84a3324efeb2a8f",
+        "android_client_info": {
+          "package_name": "com.app.groupfinance"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "971166580126-r8unm8qms70nedhvmthq05qf4h1qs42u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwx--H5CqlIqxgt0R0bupxq2jHDjOQ4Sg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "971166580126-r8unm8qms70nedhvmthq05qf4h1qs42u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
