@@ -46,6 +46,7 @@ flutter_native_splash:
   image_dark: assets/ic_launcher.png
   android : true
   ios : true
+  web : false
 
   android_12:
     image: assets/ic_launcher.png

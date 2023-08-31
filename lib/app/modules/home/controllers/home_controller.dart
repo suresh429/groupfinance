@@ -1,99 +1,25 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../customFullScreenDialog.dart';
-import '../customSnackBar.dart';
-import '../models/groupModel.dart';
+import '../models/weekModel.dart';
 
 class HomeController extends GetxController {
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  late TextEditingController nameController, addressController;
+  List<String> weekData = List<String>.from(["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]);
 
-  // Firestore operation
-  FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+  RxList<WeekModel> weekList = RxList<WeekModel>([]);
+  //Rx<List<EmployeeModel>> employees = Rx<List<EmployeeModel>>([]);
 
-  late CollectionReference collectionReference;
+  late WeekModel weekModel;
+  var itemCount = 0.obs;
 
-  RxList<GroupModel> employees = RxList<GroupModel>([]);
+
 
   @override
   void onInit() {
     super.onInit();
 
-    var args = Get.arguments['data'];
-    print("ARGS : "+args);
-    nameController = TextEditingController();
-    addressController = TextEditingController();
-    //collectionReference = firebaseFirestore.collection("employees");
-    collectionReference = firebaseFirestore.collection(args);
-    employees.bindStream(getAllEmployees());
-  }
+    for (var i = 0; i < weekData.length; i++) {
+      addEmployee(weekData[i]);
+    }
 
-  String? validateName(String value) {
-    if (value.isEmpty) {
-      return "Name can not be empty";
-    }
-    return null;
-  }
-
-  String? validateAddress(String value) {
-    if (value.isEmpty) {
-      return "Address can not be empty";
-    }
-    return null;
-  }
-
-  void saveUpdateEmployee(
-      String name, String address, String docId, int addEditFlag) {
-    final isValid = formKey.currentState!.validate();
-    if (!isValid) {
-      return;
-    }
-    formKey.currentState!.save();
-    if (addEditFlag == 1) {
-      CustomFullScreenDialog.showDialog();
-      collectionReference
-          .add({'name': name, 'address': address}).whenComplete(() {
-        CustomFullScreenDialog.cancelDialog();
-        clearEditingControllers();
-        Get.back();
-        CustomSnackBar.showSnackBar(
-            context: Get.context,
-            title: "Employee Added",
-            message: "Employee added successfully",
-            backgroundColor: Colors.green);
-      }).catchError((error) {
-        CustomFullScreenDialog.cancelDialog();
-        CustomSnackBar.showSnackBar(
-            context: Get.context,
-            title: "Error",
-            message: "Something went wrong",
-            backgroundColor: Colors.green);
-      });
-    } else if (addEditFlag == 2) {
-      //update
-      CustomFullScreenDialog.showDialog();
-      collectionReference
-          .doc(docId)
-          .update({'name': name, 'address': address}).whenComplete(() {
-        CustomFullScreenDialog.cancelDialog();
-        clearEditingControllers();
-        Get.back();
-        CustomSnackBar.showSnackBar(
-            context: Get.context,
-            title: "Employee Updated",
-            message: "Employee updated successfully",
-            backgroundColor: Colors.green);
-      }).catchError((error) {
-        CustomFullScreenDialog.cancelDialog();
-        CustomSnackBar.showSnackBar(
-            context: Get.context,
-            title: "Error",
-            message: "Something went wrong",
-            backgroundColor: Colors.red);
-      });
-    }
   }
 
   @override
@@ -103,36 +29,15 @@ class HomeController extends GetxController {
 
   @override
   void onClose() {
-    nameController.dispose();
-    addressController.dispose();
+
   }
 
-  void clearEditingControllers() {
-    nameController.clear();
-    addressController.clear();
+
+  addEmployee(String name) {
+    weekModel = WeekModel(name: name);
+    weekList.value.add(weekModel);
+    itemCount.value = weekList.value.length;
+
   }
 
-  Stream<List<GroupModel>> getAllEmployees() =>
-      collectionReference.snapshots().map((query) =>
-          query.docs.map((item) => GroupModel.fromMap(item)).toList());
-
-  void deleteData(String docId) {
-    CustomFullScreenDialog.showDialog();
-    collectionReference.doc(docId).delete().whenComplete(() {
-      CustomFullScreenDialog.cancelDialog();
-      Get.back();
-      CustomSnackBar.showSnackBar(
-          context: Get.context,
-          title: "Employee Deleted",
-          message: "Employee deleted successfully",
-          backgroundColor: Colors.green);
-    }).catchError((error) {
-      CustomFullScreenDialog.cancelDialog();
-      CustomSnackBar.showSnackBar(
-          context: Get.context,
-          title: "Error",
-          message: "Something went wrong",
-          backgroundColor: Colors.red);
-    });
-  }
 }

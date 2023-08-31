@@ -22,7 +22,8 @@ void main() async {
         primaryColor: const Color(0xff141A31),
         primaryColorDark: const Color(0xff081029),
         scaffoldBackgroundColor: const Color(0xff141A31),
-        textSelectionTheme: const TextSelectionThemeData(cursorColor: Colors.yellow),
+        textSelectionTheme:
+            const TextSelectionThemeData(cursorColor: Colors.yellow),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
             shape: MaterialStateProperty.all(
