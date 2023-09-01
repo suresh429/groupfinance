@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,6 +9,7 @@ import '../customSnackBar.dart';
 import '../models/PeopleModel.dart';
 
 class PeopleController extends GetxController {
+  RxBool isLoading = true.obs;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   late TextEditingController nameController, amountController;
 
@@ -21,7 +24,6 @@ class PeopleController extends GetxController {
 
   double get listItemTotal => peopleList.fold(0, (sum, item) => sum + (item.amount! * item.quantity!));
 
-
   @override
   void onInit() {
     super.onInit();
@@ -31,9 +33,12 @@ class PeopleController extends GetxController {
 
     nameController = TextEditingController();
     amountController = TextEditingController();
-    //collectionReference = firebaseFirestore.collection("employees");
-    collectionReference = firebaseFirestore.collection("groups").doc(weekName).collection(weekName).doc(id).collection(groupName);
-    //collectionReference.doc(weekName).collection(groupName);
+    collectionReference = firebaseFirestore
+        .collection("groups")
+        .doc(weekName)
+        .collection(weekName)
+        .doc(id)
+        .collection(groupName);
     peopleList.bindStream(getAllPeople());
   }
 
@@ -60,8 +65,11 @@ class PeopleController extends GetxController {
     formKey.currentState!.save();
     if (addEditFlag == 1) {
       CustomFullScreenDialog.showDialog();
-      collectionReference
-          .add({'userName': name, 'amount': double.parse(amount),"quantity":1}).whenComplete(() {
+      collectionReference.add({
+        'userName': name,
+        'amount': double.parse(amount),
+        "quantity": 1
+      }).whenComplete(() {
         CustomFullScreenDialog.cancelDialog();
         clearEditingControllers();
         Get.back();
@@ -119,9 +127,22 @@ class PeopleController extends GetxController {
     amountController.clear();
   }
 
-  Stream<List<PeopleModel>> getAllPeople() =>
-      collectionReference.snapshots().map((query) =>
-          query.docs.map((item) => PeopleModel.fromMap(item)).toList());
+  /*Stream<List<PeopleModel>> getAllPeople() => collectionReference.snapshots().map((query) =>
+          query.docs.map((item) => PeopleModel.fromMap(item)).toList());*/
+
+  Stream<List<PeopleModel>> getAllPeople() {
+    peopleList.listen((_) {
+      isLoading.value = false;
+    });
+
+    return collectionReference.snapshots().map(
+      (query) {
+        isLoading.value = false;
+        return query.docs.map((item) => PeopleModel.fromMap(item)).toList();
+      },
+    );
+
+  }
 
   void deleteData(String docId) {
     CustomFullScreenDialog.showDialog();
@@ -142,7 +163,4 @@ class PeopleController extends GetxController {
           backgroundColor: Colors.red);
     });
   }
-
-
-
 }

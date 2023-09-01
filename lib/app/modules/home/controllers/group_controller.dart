@@ -7,25 +7,29 @@ import '../customSnackBar.dart';
 import '../models/groupModel.dart';
 
 class GroupController extends GetxController {
+  RxBool isLoading = true.obs;
+
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   late TextEditingController nameController, addressController;
 
-  // Firestore operation
+  // Firestorm operation
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
   late CollectionReference collectionReference;
 
   RxList<GroupModel> groupList = RxList<GroupModel>([]);
 
+
+
   @override
   void onInit() {
+    print("STATUS : onInit");
     super.onInit();
 
-    var weekName = Get.arguments['weekName'];
-
+    var weekName = Get.arguments['weekName']!;
     nameController = TextEditingController();
     addressController = TextEditingController();
-    //collectionReference = firebaseFirestore.collection("employees");
+    groupList.clear();
     collectionReference = firebaseFirestore.collection("groups").doc(weekName).collection(weekName);
     groupList.bindStream(getAllGroups());
   }
@@ -43,6 +47,9 @@ class GroupController extends GetxController {
     }
     return null;
   }
+
+
+
 
   void saveUpdateGroup(
       String name, String docId, int addEditFlag) {
@@ -99,12 +106,15 @@ class GroupController extends GetxController {
   @override
   void onReady() {
     super.onReady();
+    print("STATUS : onReady");
+
   }
 
   @override
   void onClose() {
     nameController.dispose();
     addressController.dispose();
+    print("STATUS : onClose");
   }
 
   void clearEditingControllers() {
@@ -112,9 +122,24 @@ class GroupController extends GetxController {
     addressController.clear();
   }
 
-  Stream<List<GroupModel>> getAllGroups() =>
+ /* Stream<List<GroupModel>> getAllGroups() =>
       collectionReference.snapshots().map((query) =>
-          query.docs.map((item) => GroupModel.fromMap(item)).toList());
+          query.docs.map((item) => GroupModel.fromMap(item)).toList());*/
+
+
+  Stream<List<GroupModel>> getAllGroups() {
+    groupList.listen((_) {
+      isLoading.value = false;
+    });
+
+    return collectionReference.snapshots(includeMetadataChanges: true).map(
+          (query) {
+        isLoading.value = false;
+        return query.docs.map((item) => GroupModel.fromMap(item)).toList();
+      },
+    );
+
+  }
 
   void deleteData(String docId) {
     CustomFullScreenDialog.showDialog();

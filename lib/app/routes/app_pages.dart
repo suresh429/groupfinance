@@ -20,18 +20,27 @@ class AppPages {
       name: _Paths.HOME,
       page: () => const HomeView(),
       binding: HomeBinding(),
+      transition: Transition.leftToRightWithFade,
+      opaque: false,
+      showCupertinoParallax: true,
     ),
 
     GetPage(
       name: _Paths.GROUP,
       page: () => const GroupView(),
       binding: GroupBinding(),
+      transition: Transition.leftToRightWithFade,
+      opaque: false,
+      showCupertinoParallax: true,
     ),
 
     GetPage(
       name: _Paths.PEOPLE,
       page: () => const PeopleView(),
       binding: PeopleBinding(),
+      transition: Transition.leftToRightWithFade,
+      opaque: false,
+      showCupertinoParallax: true,
     ),
   ];
 }

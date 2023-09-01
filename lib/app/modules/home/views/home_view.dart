@@ -31,10 +31,9 @@ class HomeView extends GetView<HomeController> {
               trailing: const Icon(
                   Icons.arrow_forward_ios_outlined,
                 ),
-              onTap: () {
-
+              onTap: () async {
                 var args = {'weekName': controller.weekList[index].name};
-                Get.toNamed(Routes.GROUP, arguments: args);
+                await Get.toNamed(Routes.GROUP, arguments: args);
 
               },
             ),

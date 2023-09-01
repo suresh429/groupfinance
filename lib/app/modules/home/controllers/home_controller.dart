@@ -5,7 +5,6 @@ class HomeController extends GetxController {
   List<String> weekData = List<String>.from(["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]);
 
   RxList<WeekModel> weekList = RxList<WeekModel>([]);
-  //Rx<List<EmployeeModel>> employees = Rx<List<EmployeeModel>>([]);
 
   late WeekModel weekModel;
   var itemCount = 0.obs;

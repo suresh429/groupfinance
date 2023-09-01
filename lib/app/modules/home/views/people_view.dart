@@ -18,11 +18,9 @@ class PeopleView extends GetView<PeopleController> {
     double sum = 0.0;
     print("Cart Total: \$${controller.listItemTotal.toStringAsFixed(2)}");
 
-
     return Scaffold(
-
       appBar: AppBar(
-        title:  Text(groupName.toString()),
+        title: Text(groupName.toString()),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -32,48 +30,79 @@ class PeopleView extends GetView<PeopleController> {
           )
         ],
       ),
-      body: Obx(
-        () => ListView.builder(
-          itemCount: controller.peopleList.length,
-          itemBuilder: (context, index) => Card(
-            color: const Color(0xff081029),
-            child: ListTile(
-              title: Text(controller.peopleList[index].userName!),
-              subtitle: Text("\u20b9 ${controller.peopleList[index].amount.toString()}  ${controller.listItemTotal.toStringAsFixed(2)}"),
-              leading: CircleAvatar(
-                backgroundColor: Colors.yellow,
-                child: Text(
-                  controller.peopleList[index].userName!.substring(0, 1).capitalize!,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-              trailing: IconButton(
-                icon: const Icon(
-                  Icons.delete_forever,
-                  color: Colors.red,
-                ),
-                onPressed: () {
-                   displayDeleteDialog(controller.peopleList[index].docId!);
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: Obx(
+                () {
+                  if (controller.isLoading.value) {
+                    return const Center(
+                        child:
+                            CircularProgressIndicator()); // Display loading spinner
+                  }
+                  return ListView.builder(
+                    itemCount: controller.peopleList.length,
+                    itemBuilder: (context, index) => Card(
+                      color: const Color(0xff081029),
+                      child: ListTile(
+                        title: Text(controller.peopleList[index].userName!),
+                        subtitle: Text(
+                            "\u20b9 ${controller.peopleList[index].amount!.toStringAsFixed(2)}"),
+                        leading: CircleAvatar(
+                          backgroundColor: Colors.yellow,
+                          child: Text(
+                            controller.peopleList[index].userName!
+                                .substring(0, 1)
+                                .capitalize!,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        trailing: IconButton(
+                          icon: const Icon(
+                            Icons.delete_forever,
+                            color: Colors.red,
+                          ),
+                          onPressed: () {
+                            displayDeleteDialog(
+                                controller.peopleList[index].docId!);
+                          },
+                        ),
+                        onTap: () {
+                          controller.nameController.text =
+                              controller.peopleList[index].userName!;
+                          // controller.addressController.text = controller.employees[index].address!;
+                          /*_buildAddEditEmployeeView(
+                            text: 'UPDATE',
+                            addEditFlag: 2,
+                            docId: controller.employees[index].docId!);*/
+                        },
+                      ),
+                    ),
+                  );
                 },
               ),
-              onTap: () {
-                controller.nameController.text =
-                    controller.peopleList[index].userName!;
-               // controller.addressController.text = controller.employees[index].address!;
-                /*_buildAddEditEmployeeView(
-                    text: 'UPDATE',
-                    addEditFlag: 2,
-                    docId: controller.employees[index].docId!);*/
-
-              },
             ),
-          ),
+            Obx(() => ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 40),
+                      backgroundColor: Colors.yellow
+                      // fromHeight use double.infinity as width and 40 is the height
+                      ),
+                  onPressed: () {},
+                  child: Text(
+                    "Total Amount : \u20b9 ${controller.listItemTotal.toStringAsFixed(2)}",
+                    style: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16),
+                  ),
+                ))
+          ],
         ),
       ),
     );
   }
-
-
 
   _buildAddEditEmployeeView({String? text, int? addEditFlag, String? docId}) {
     Get.bottomSheet(
@@ -97,7 +126,8 @@ class PeopleView extends GetView<PeopleController> {
                 children: [
                   Text(
                     '${text} People',
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(
                     height: 8,
@@ -139,12 +169,13 @@ class PeopleView extends GetView<PeopleController> {
                     child: ElevatedButton(
                       child: Text(
                         text!,
-                        style: const TextStyle(color: Colors.black, fontSize: 16),
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 16),
                       ),
                       onPressed: () {
                         controller.saveUpdatePeople(
-                            controller.nameController.text,
-                            controller.amountController.text,
+                            controller.nameController.text.toString(),
+                            controller.amountController.text.toString(),
                             docId!,
                             addEditFlag!);
                       },

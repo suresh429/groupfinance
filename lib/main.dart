@@ -2,7 +2,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
+import 'package:groupfinance/app/modules/home/bindings/home_binding.dart';
 
+import 'app/modules/home/controllers/group_controller.dart';
 import 'app/routes/app_pages.dart';
 
 void main() async {
@@ -10,11 +12,13 @@ void main() async {
       .then((value) => FlutterNativeSplash.remove());
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
   runApp(
     GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Firestore CRUD",
       initialRoute: AppPages.INITIAL,
+      initialBinding: HomeBinding(),
       getPages: AppPages.routes,
       themeMode: ThemeMode.dark,
       darkTheme: ThemeData.dark().copyWith(

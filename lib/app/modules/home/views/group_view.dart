@@ -9,11 +9,11 @@ class GroupView extends GetView<GroupController> {
 
   @override
   Widget build(BuildContext context) {
-    var weekName = Get.arguments['weekName'];
-
+    var weekName = Get.arguments['weekName']!;
+    print("weekName $weekName");
     return Scaffold(
       appBar: AppBar(
-        title: Text(weekName),
+        title: Text(weekName!),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -23,44 +23,53 @@ class GroupView extends GetView<GroupController> {
           )
         ],
       ),
-      body: Obx(
-        () => ListView.builder(
-          itemCount: controller.groupList.length,
-          itemBuilder: (context, index) => Card(
-            color: const Color(0xff081029),
-            child: ListTile(
-              title: Text(controller.groupList[index].name!),
-              //subtitle: Text(controller.employees[index].address!),
-              leading: CircleAvatar(
-                backgroundColor: Colors.yellow,
-                child: Text(
-                  controller.groupList[index].name!.substring(0, 1).capitalize!,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-              trailing:  const Icon(
-                  Icons.arrow_forward_ios_outlined,
-                 // color: Colors.red,
-                ),
+      body: Column(
+        children: [
+          Expanded(
+            child: Obx(
+              () {
+                final myData = controller.groupList;
+                if (controller.isLoading.value) {
+                  return const Center(
+                      child:
+                          CircularProgressIndicator()); // Display loading spinner
+                }
 
-              onTap: () {
-               /* controller.nameController.text =
-                    controller.groupList[index].name!;*/
-               // controller.addressController.text = controller.employees[index].address!;
-                /*_buildAddEditEmployeeView(
-                    text: 'UPDATE',
-                    addEditFlag: 2,
-                    docId: controller.employees[index].docId!);*/
+                return ListView.builder(
+                  itemCount: myData.length,
+                  itemBuilder: (context, index) => Card(
+                    color: const Color(0xff081029),
+                    child: ListTile(
+                      title: Text(myData[index].name!),
+                      //subtitle: Text(controller.employees[index].address!),
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.yellow,
+                        child: Text(
+                          controller.groupList[index].name!
+                              .substring(0, 1)
+                              .capitalize!,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      trailing: const Icon(
+                        Icons.arrow_forward_ios_outlined,
+                        // color: Colors.red,
+                      ),
 
-                Get.toNamed(Routes.PEOPLE, arguments: [
-                  {"id": controller.groupList[index].docId!},
-                  {"weekName": weekName},
-                  {"groupName": controller.groupList[index].name!}
-                ]);
+                      onTap: () async{
+                        await Get.toNamed(Routes.PEOPLE, arguments: [
+                          {"id": controller.groupList[index].docId!.toString()},
+                          {"weekName": weekName!},
+                          {"groupName": controller.groupList[index].name!}
+                        ]);
+                      },
+                    ),
+                  ),
+                );
               },
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -87,7 +96,8 @@ class GroupView extends GetView<GroupController> {
                 children: [
                   Text(
                     '${text} Group',
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(
                     height: 8,
@@ -104,7 +114,7 @@ class GroupView extends GetView<GroupController> {
                       return controller.validateName(value!);
                     },
                   ),
-                 /* SizedBox(
+                  /* SizedBox(
                     height: 10,
                   ),
                   TextFormField(
@@ -129,12 +139,13 @@ class GroupView extends GetView<GroupController> {
                     child: ElevatedButton(
                       child: Text(
                         text!,
-                        style: const TextStyle(color: Colors.black, fontSize: 16),
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 16),
                       ),
                       onPressed: () {
                         controller.saveUpdateGroup(
                             controller.nameController.text,
-                           // controller.addressController.text,
+                            // controller.addressController.text,
                             docId!,
                             addEditFlag!);
                       },
