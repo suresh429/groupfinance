@@ -11,7 +11,7 @@ class GroupView extends GetView<GroupController> {
   @override
   Widget build(BuildContext context) {
     Get.lazyPut(() => GroupController().resetController());
-    GroupController controller = GroupController();
+    final GroupController controller = GroupController();
     controller.resetController();
     var weekName = Get.arguments['weekName']!;
     print("weekName $weekName");
@@ -43,7 +43,12 @@ class GroupView extends GetView<GroupController> {
                       child:
                           CircularProgressIndicator()); // Display loading spinner
                 }
-
+                if(controller.groupList.isEmpty){
+                  return const Center(child: Text("No data Found!", style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
+                  ));
+                }
                 return ListView.builder(
                   itemCount: myData.length,
                   itemBuilder: (context, index) => Card(
@@ -157,6 +162,7 @@ class GroupView extends GetView<GroupController> {
                             // controller.addressController.text,
                             docId!,
                             addEditFlag!);
+                        controller.resetController();
                       },
                     ),
                   ),

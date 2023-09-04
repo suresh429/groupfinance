@@ -139,7 +139,9 @@ class PeopleController extends GetxController {
           query.docs.map((item) => PeopleModel.fromMap(item)).toList());*/
 
   Stream<List<PeopleModel>> getAllPeople() {
-    peopleList.listen((_) {
+    peopleList.listen((_) async{
+      isLoading.value = true;
+      await Future.delayed(const Duration(seconds: 1));
       isLoading.value = false;
     });
 

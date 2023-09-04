@@ -46,6 +46,12 @@ class PeopleView extends GetView<PeopleController> {
                         child:
                             CircularProgressIndicator()); // Display loading spinner
                   }
+                  if(controller.peopleList.isEmpty){
+                    return const  Center(child: Text("No data Found!", style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16),
+                    ));
+                  }
                   return ListView.builder(
                     itemCount: controller.peopleList.length,
                     itemBuilder: (context, index) => Card(
