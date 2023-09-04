@@ -24,9 +24,14 @@ class PeopleController extends GetxController {
 
   double get listItemTotal => peopleList.fold(0, (sum, item) => sum + (item.amount! * item.quantity!));
 
+
+  void resetController() {
+    onInit(); // Call onInit to perform the initialization again.
+  }
+
   @override
   void onInit() {
-    super.onInit();
+
     var id = argumentData[0]['id'];
     var weekName = argumentData[1]['weekName'];
     var groupName = argumentData[2]['groupName'];
@@ -40,6 +45,9 @@ class PeopleController extends GetxController {
         .doc(id)
         .collection(groupName);
     peopleList.bindStream(getAllPeople());
+
+    super.onInit();
+
   }
 
   String? validateName(String value) {

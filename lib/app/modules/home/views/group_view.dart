@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -9,10 +10,18 @@ class GroupView extends GetView<GroupController> {
 
   @override
   Widget build(BuildContext context) {
+    Get.lazyPut(() => GroupController().resetController());
+    GroupController controller = GroupController();
+    controller.resetController();
     var weekName = Get.arguments['weekName']!;
     print("weekName $weekName");
     return Scaffold(
       appBar: AppBar(
+        leading: BackButton(
+          onPressed: () {
+            Get.back();
+          } ,
+        ),
         title: Text(weekName!),
         actions: [
           IconButton(
@@ -56,7 +65,7 @@ class GroupView extends GetView<GroupController> {
                         // color: Colors.red,
                       ),
 
-                      onTap: () async{
+                      onTap: () async {
                         await Get.toNamed(Routes.PEOPLE, arguments: [
                           {"id": controller.groupList[index].docId!.toString()},
                           {"weekName": weekName!},

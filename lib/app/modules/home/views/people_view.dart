@@ -9,6 +9,11 @@ class PeopleView extends GetView<PeopleController> {
 
   @override
   Widget build(BuildContext context) {
+
+    Get.lazyPut(() => PeopleController().resetController());
+    PeopleController controller = PeopleController();
+    controller.resetController();
+
     var argumentData = Get.arguments;
 
     var id = argumentData[0]['id'];

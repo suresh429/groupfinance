@@ -17,21 +17,25 @@ class GroupController extends GetxController {
 
   late CollectionReference collectionReference;
 
-  RxList<GroupModel> groupList = RxList<GroupModel>([]);
+ // RxList<GroupModel> groupList = RxList<GroupModel>([]);
+  RxList<GroupModel> groupList = <GroupModel>[].obs;
 
 
+  void resetController() {
+    onInit(); // Call onInit to perform the initialization again.
+  }
 
   @override
   void onInit() {
-    print("STATUS : onInit");
-    super.onInit();
-
+    print("STATUS : onInit GROUP");
     var weekName = Get.arguments['weekName']!;
     nameController = TextEditingController();
     addressController = TextEditingController();
     groupList.clear();
     collectionReference = firebaseFirestore.collection("groups").doc(weekName).collection(weekName);
-    groupList.bindStream(getAllGroups());
+    // groupList.bindStream(getAllGroups());
+    _loadTodos();
+    super.onInit();
   }
 
   String? validateName(String value) {
@@ -47,8 +51,6 @@ class GroupController extends GetxController {
     }
     return null;
   }
-
-
 
 
   void saveUpdateGroup(
@@ -117,6 +119,8 @@ class GroupController extends GetxController {
     print("STATUS : onClose");
   }
 
+
+
   void clearEditingControllers() {
     nameController.clear();
     addressController.clear();
@@ -139,6 +143,14 @@ class GroupController extends GetxController {
       },
     );
 
+  }
+
+  Future<void> _loadTodos() async {
+    isLoading.value = true; // Set loading to true when fetching data
+    await Future.delayed(const Duration(seconds: 2));
+    final QuerySnapshot querySnapshot = await collectionReference.get();
+    groupList.value = querySnapshot.docs.map((item) => GroupModel.fromMap(item)).toList();
+    isLoading.value = false; // Set loading to false when data is fetched
   }
 
   void deleteData(String docId) {

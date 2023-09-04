@@ -27,7 +27,7 @@ class AppPages {
 
     GetPage(
       name: _Paths.GROUP,
-      page: () => const GroupView(),
+      page: () =>  GroupView(),
       binding: GroupBinding(),
       transition: Transition.leftToRightWithFade,
       opaque: false,

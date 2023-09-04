@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:groupfinance/app/modules/home/bindings/group_binding.dart';
 import 'package:groupfinance/app/modules/home/controllers/home_controller.dart';
+import 'package:groupfinance/app/modules/home/views/group_view.dart';
 
 import '../../../routes/app_pages.dart';
+import '../controllers/group_controller.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
@@ -10,6 +13,7 @@ class HomeView extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dash Board'),
@@ -33,8 +37,8 @@ class HomeView extends GetView<HomeController> {
                 ),
               onTap: () async {
                 var args = {'weekName': controller.weekList[index].name};
-                await Get.toNamed(Routes.GROUP, arguments: args);
-
+                await Get.toNamed(Routes.GROUP,arguments: args,);
+               // Get.put(GroupController());
               },
             ),
           ),

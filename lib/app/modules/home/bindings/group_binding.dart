@@ -6,5 +6,7 @@ class GroupBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<GroupController>(() => GroupController());
+   // Get.put(GroupController(), permanent: false);
+
   }
 }
