@@ -10,7 +10,12 @@ class GroupController extends GetxController {
   RxBool isLoading = true.obs;
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  late TextEditingController nameController, addressController;
+  late TextEditingController nameController,
+      loanAmountController,
+      loanDateController,
+      loanRepaymentController,
+      totalWeekController,
+      penaltyController;
 
   // Firestorm operation
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
@@ -29,14 +34,20 @@ class GroupController extends GetxController {
     print("STATUS : onInit GROUP");
     var weekName = Get.arguments['weekName']!;
     nameController = TextEditingController();
-    addressController = TextEditingController();
-    groupList.clear();
+    loanAmountController = TextEditingController();
+    loanDateController = TextEditingController();
+    loanRepaymentController = TextEditingController();
+    totalWeekController = TextEditingController();
+    penaltyController = TextEditingController();
+    penaltyController.text = "200";
+
+   // groupList.clear();
     collectionReference = firebaseFirestore
         .collection("groups")
         .doc(weekName)
         .collection(weekName);
-     groupList.bindStream(getAllGroups());
-   // _loadTodos();
+    groupList.bindStream(getAllGroups());
+    // _loadTodos();
     super.onInit();
   }
 
@@ -47,14 +58,50 @@ class GroupController extends GetxController {
     return null;
   }
 
-  String? validateAddress(String value) {
+  String? validateLoanAmount(String value) {
     if (value.isEmpty) {
-      return "Address can not be empty";
+      return "Loan Amount can not be empty";
     }
     return null;
   }
 
-  void saveUpdateGroup(String name, String docId, int addEditFlag) {
+  String? validateDate(String value) {
+    if (value.isEmpty) {
+      return "Loan Date can not be empty";
+    }
+    return null;
+  }
+
+  String? validateLoanRepayment(String value) {
+    if (value.isEmpty) {
+      return "Loan Repayment can not be empty";
+    }
+    return null;
+  }
+
+  String? validateTotalWeeks(String value) {
+    if (value.isEmpty) {
+      return "Total Weeks can not be empty";
+    }
+    return null;
+  }
+
+  String? validatePenalty(String value) {
+    if (value.isEmpty) {
+      return "Penalty can not be empty";
+    }
+    return null;
+  }
+
+  void saveUpdateGroup(
+      String groupName,
+      String loanAmount,
+      String date,
+      String repayment,
+      String totalWeeks,
+      String penalty,
+      String docId,
+      int addEditFlag) {
     final isValid = formKey.currentState!.validate();
     if (!isValid) {
       return;
@@ -62,7 +109,17 @@ class GroupController extends GetxController {
     formKey.currentState!.save();
     if (addEditFlag == 1) {
       CustomFullScreenDialog.showDialog();
-      collectionReference.add({'name': name}).whenComplete(() {
+      collectionReference
+          .add({
+        'groupName': groupName,
+        'loanAmount': double.parse(loanAmount),
+        'date': date,
+        'repayment': double.parse(repayment),
+        'totalWeeks': int.parse(totalWeeks.toString()),
+        'penalty': double.parse(penalty),
+      })
+          .then((_) {
+        // Success case
         CustomFullScreenDialog.cancelDialog();
         clearEditingControllers();
         Get.back();
@@ -72,17 +129,26 @@ class GroupController extends GetxController {
             message: "Group added successfully",
             backgroundColor: Colors.green);
       }).catchError((error) {
+        // Error case
+        print("ERROR : " + error.toString());
         CustomFullScreenDialog.cancelDialog();
         CustomSnackBar.showSnackBar(
             context: Get.context,
             title: "Error",
             message: "Something went wrong",
-            backgroundColor: Colors.green);
+            backgroundColor: Colors.red);
       });
     } else if (addEditFlag == 2) {
       //update
       CustomFullScreenDialog.showDialog();
-      collectionReference.doc(docId).update({'name': name}).whenComplete(() {
+      collectionReference.doc(docId).update({
+        'groupName': groupName,
+        'loanAmount': double.parse(loanAmount),
+        'date': date,
+        'repayment': double.parse(repayment),
+        'totalWeeks': int.parse(totalWeeks.toString()),
+        'penalty': double.parse(penalty)
+      }).whenComplete(() {
         CustomFullScreenDialog.cancelDialog();
         clearEditingControllers();
         Get.back();
@@ -102,18 +168,23 @@ class GroupController extends GetxController {
     }
   }
 
-
-
   @override
   void onClose() {
     nameController.dispose();
-    addressController.dispose();
-    print("STATUS : onClose");
+    loanAmountController.dispose();
+    loanDateController.dispose();
+    loanRepaymentController.dispose();
+    totalWeekController.dispose();
+    penaltyController.dispose();
   }
 
   void clearEditingControllers() {
     nameController.clear();
-    addressController.clear();
+    loanAmountController.clear();
+    loanDateController.clear();
+    loanRepaymentController.clear();
+    totalWeekController.clear();
+    penaltyController.clear();
   }
 
   /* Stream<List<GroupModel>> getAllGroups() =>
@@ -121,7 +192,7 @@ class GroupController extends GetxController {
           query.docs.map((item) => GroupModel.fromMap(item)).toList());*/
 
   Stream<List<GroupModel>> getAllGroups() {
-    groupList.listen((_) async{
+    groupList.listen((_) async {
       isLoading.value = true;
       await Future.delayed(const Duration(seconds: 1));
       isLoading.value = false;

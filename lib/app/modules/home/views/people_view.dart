@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:groupfinance/app/modules/home/controllers/people_controller.dart';
@@ -21,7 +22,10 @@ class PeopleView extends GetView<PeopleController> {
     var groupName = argumentData[2]['groupName'];
 
     double sum = 0.0;
-    print("Cart Total: \$${controller.listItemTotal.toStringAsFixed(2)}");
+
+    if (kDebugMode) {
+      print("Cart Total: \$${controller.listItemTotal.toStringAsFixed(2)}");
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -38,6 +42,22 @@ class PeopleView extends GetView<PeopleController> {
       body: SafeArea(
         child: Column(
           children: [
+            Card(),
+            Obx(() => ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 40),
+                  backgroundColor: Colors.yellow
+                // fromHeight use double.infinity as width and 40 is the height
+              ),
+              onPressed: () {},
+              child: Text(
+                "Total Amount : \u20b9 ${controller.listItemTotal.toStringAsFixed(2)}",
+                style: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16),
+              ),
+            )),
             Expanded(
               child: Obx(
                 () {
@@ -75,8 +95,7 @@ class PeopleView extends GetView<PeopleController> {
                             color: Colors.red,
                           ),
                           onPressed: () {
-                            displayDeleteDialog(
-                                controller.peopleList[index].docId!);
+                            displayDeleteDialog(controller.peopleList[index].docId!);
                           },
                         ),
                         onTap: () {
@@ -94,21 +113,6 @@ class PeopleView extends GetView<PeopleController> {
                 },
               ),
             ),
-            Obx(() => ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 40),
-                      backgroundColor: Colors.yellow
-                      // fromHeight use double.infinity as width and 40 is the height
-                      ),
-                  onPressed: () {},
-                  child: Text(
-                    "Total Amount : \u20b9 ${controller.listItemTotal.toStringAsFixed(2)}",
-                    style: const TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16),
-                  ),
-                ))
           ],
         ),
       ),

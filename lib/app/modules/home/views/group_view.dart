@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -20,7 +19,7 @@ class GroupView extends GetView<GroupController> {
         leading: BackButton(
           onPressed: () {
             Get.back();
-          } ,
+          },
         ),
         title: Text(weekName!),
         actions: [
@@ -40,13 +39,13 @@ class GroupView extends GetView<GroupController> {
                 final myData = controller.groupList;
                 if (controller.isLoading.value) {
                   return const Center(
-                      child:
-                          CircularProgressIndicator()); // Display loading spinner
+                      child: CircularProgressIndicator()); // Display loading spinner
                 }
-                if(controller.groupList.isEmpty){
-                  return const Center(child: Text("No data Found!", style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16),
+                if (controller.groupList.isEmpty) {
+                  return const Center(
+                      child: Text(
+                    "No data Found!",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ));
                 }
                 return ListView.builder(
@@ -54,12 +53,12 @@ class GroupView extends GetView<GroupController> {
                   itemBuilder: (context, index) => Card(
                     color: const Color(0xff081029),
                     child: ListTile(
-                      title: Text(myData[index].name!),
+                      title: Text(myData[index].groupName!),
                       //subtitle: Text(controller.employees[index].address!),
                       leading: CircleAvatar(
                         backgroundColor: Colors.yellow,
                         child: Text(
-                          controller.groupList[index].name!
+                          controller.groupList[index].groupName!
                               .substring(0, 1)
                               .capitalize!,
                           style: const TextStyle(fontWeight: FontWeight.bold),
@@ -74,7 +73,7 @@ class GroupView extends GetView<GroupController> {
                         await Get.toNamed(Routes.PEOPLE, arguments: [
                           {"id": controller.groupList[index].docId!.toString()},
                           {"weekName": weekName!},
-                          {"groupName": controller.groupList[index].name!}
+                          {"groupName": controller.groupList[index].groupName!}
                         ]);
                       },
                     ),
@@ -114,11 +113,13 @@ class GroupView extends GetView<GroupController> {
                         fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(
-                    height: 8,
+                    height: 15,
                   ),
                   TextFormField(
                     decoration: InputDecoration(
-                      hintText: 'Group Name',
+                      // hintText: 'Group Name',
+                      floatingLabelBehavior: FloatingLabelBehavior.auto,
+                      labelText: 'Group Name',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -128,22 +129,102 @@ class GroupView extends GetView<GroupController> {
                       return controller.validateName(value!);
                     },
                   ),
-                  /* SizedBox(
-                    height: 10,
+                  const SizedBox(
+                    height: 15,
                   ),
                   TextFormField(
-                    keyboardType: TextInputType.multiline,
+                    keyboardType: TextInputType.number,
                     decoration: InputDecoration(
-                      hintText: 'Address',
+                      // hintText: 'Address',
+                      floatingLabelBehavior: FloatingLabelBehavior.auto,
+                      labelText: 'Loan Amount',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    controller: controller.addressController,
+                    controller: controller.loanAmountController,
                     validator: (value) {
-                      return controller.validateAddress(value!);
+                      return controller.validateLoanAmount(value!);
                     },
-                  ),*/
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  TextFormField(
+                    keyboardType: TextInputType.datetime,
+                    decoration: InputDecoration(
+                      // hintText: 'Address',
+                      floatingLabelBehavior: FloatingLabelBehavior.auto,
+                      labelText: 'Loan Date',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    controller: controller.loanDateController,
+                    validator: (value) {
+                      return controller.validateDate(value!);
+                    },
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  TextFormField(
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      // hintText: 'Address',
+                      floatingLabelBehavior: FloatingLabelBehavior.auto,
+                      labelText: 'Loan Repayment',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    controller: controller.loanRepaymentController,
+                    validator: (value) {
+                      return controller.validateLoanRepayment(value!);
+                    },
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  TextFormField(
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      // hintText: 'Address',
+                      floatingLabelBehavior: FloatingLabelBehavior.auto,
+                      labelText: 'Total Weeks',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    controller: controller.totalWeekController,
+                    validator: (value) {
+                      return controller.validateTotalWeeks(value!);
+                    },
+                  ),
+
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  TextFormField(
+                    keyboardType: TextInputType.number,
+                    enabled: false,
+                    //initialValue: "200",
+                    decoration: InputDecoration(
+                      // hintText: 'Address',
+                      floatingLabelBehavior: FloatingLabelBehavior.auto,
+                      labelText: 'Penalty (200 interest for 10,000 per week)',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    controller: controller.penaltyController,
+                    validator: (value) {
+                      return controller.validatePenalty(value!);
+                    },
+                  ),
+
+
+
                   const SizedBox(
                     height: 8,
                   ),
@@ -159,7 +240,11 @@ class GroupView extends GetView<GroupController> {
                       onPressed: () {
                         controller.saveUpdateGroup(
                             controller.nameController.text,
-                            // controller.addressController.text,
+                            controller.loanAmountController.text,
+                            controller.loanDateController.text,
+                            controller.loanRepaymentController.text,
+                            controller.totalWeekController.text,
+                            controller.penaltyController.text,
                             docId!,
                             addEditFlag!);
                         controller.resetController();

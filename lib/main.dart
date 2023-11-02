@@ -17,7 +17,7 @@ void main() async {
   runApp(
     GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      title: "Firestore CRUD",
+      title: "Group Finance",
       initialRoute: AppPages.INITIAL,
       initialBinding: HomeBinding(),
       getPages: AppPages.routes,
